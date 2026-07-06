@@ -19,6 +19,12 @@ pipeline {
             }
         }
 
+        stage('Load Image In Minikube') {
+            steps {
+                sh 'minikube image load demo-app:${BUILD_NUMBER}'
+            }
+        }
+
         stage('Update Deployment') {
             steps {
                 sh '''
@@ -28,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Rollout Status') {
+        stage('Wait Rollout') {
             steps {
                 sh 'kubectl rollout status deployment/demo-app'
             }
