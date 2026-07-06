@@ -21,6 +21,8 @@ pipeline {
 
         stage('Deploy Kubernetes') {
             steps {
+            	sh 'pwd'
+            	sh 'ls -la'
                 sh 'kubectl apply -f deployment.yaml'
                 sh 'kubectl apply -f service.yaml'
             }
