@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Maven') {
             steps {
                 sh 'mvn clean package'
@@ -21,29 +15,22 @@ pipeline {
 
         stage('Build Docker') {
             steps {
-                sh 'docker build -t demo-app:latest .'
+                sh 'docker build -t demo-app:${BUILD_NUMBER} .'
             }
         }
 
-        stage('Deploy Kubernetes') {
+        stage('Update Deployment') {
             steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
+                sh '''
+                kubectl set image deployment/demo-app \
+                demo-app=demo-app:${BUILD_NUMBER}
+                '''
             }
         }
 
-        stage('Rollout Restart') {
+        stage('Rollout Status') {
             steps {
-                sh 'kubectl rollout restart deployment/demo-app'
                 sh 'kubectl rollout status deployment/demo-app'
-            }
-        }
-
-        stage('Verify') {
-            steps {
-                sh 'kubectl get pods'
-                sh 'kubectl get deployments'
-                sh 'kubectl get svc'
             }
         }
     }
