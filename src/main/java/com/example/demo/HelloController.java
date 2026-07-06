@@ -8,6 +8,6 @@ public class HelloController {
 
     @GetMapping("/api/hello")
     public String hello() {
-        return "Ciao dal pod Kubernetes!";
+        return "Ciao dal pod Kubernetes modificato!";
     }
 }
